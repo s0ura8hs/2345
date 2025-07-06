@@ -72,6 +72,10 @@ const PortfolioGenerator = () => {
     setGeneratedFiles(files);
   };
 
+  const goToStep = (stepIndex) => {
+    setCurrentStep(stepIndex);
+  };
+
   const CurrentStepComponent = steps[currentStep].component;
 
   return (
