@@ -110,6 +110,8 @@ const PortfolioGenerator = () => {
               <div
                 key={index}
                 className={`progress-step ${index <= currentStep ? 'active' : ''}`}
+                onClick={() => goToStep(index)}
+                style={{ cursor: 'pointer' }}
               >
                 <div className="step-number">{index + 1}</div>
                 <div className="step-title">{step.title}</div>
