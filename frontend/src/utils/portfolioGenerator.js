@@ -1495,53 +1495,238 @@ section {
 }`;
 
   // Generate JavaScript
-  const js = `// Portfolio JavaScript
+  const js = `// Portfolio JavaScript - Enhanced with Neural Network & Mouse Effects
 document.addEventListener('DOMContentLoaded', function() {
-    // Cursor glow effect
-    const cursorGlow = document.querySelector('.cursor-glow');
+    // Initialize all effects and functionality
+    initializeNavigation();
+    initializeMouseGlow();
+    initializeNeuralNetwork();
+    initializeScrollAnimations();
+    initializeSkillAnimations();
+    
+    // Mobile menu toggle
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
+    
+    if (hamburger && navMenu) {
+        hamburger.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+    }
+    
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('navbar');
+        if (navbar) {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        }
+    });
+});
+
+// Navigation functionality - smooth scrolling to sections
+function initializeNavigation() {
+    const navLinks = document.querySelectorAll('a[href^="#"]');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetSection = document.getElementById(targetId);
+            
+            if (targetSection) {
+                const offsetTop = targetSection.offsetTop - 80; // Account for fixed navbar
+                
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+                
+                // Close mobile menu if open
+                const navMenu = document.getElementById('nav-menu');
+                const hamburger = document.getElementById('hamburger');
+                if (navMenu && hamburger) {
+                    navMenu.classList.remove('active');
+                    hamburger.classList.remove('active');
+                }
+            }
+        });
+    });
+}
+
+// Mouse glow effect - Silver yellowish glitter following mouse
+function initializeMouseGlow() {
+    const mouseGlow = document.querySelector('.mouse-glow');
     let mouseX = 0;
     let mouseY = 0;
     let glowX = 0;
     let glowY = 0;
-
+    
+    // Track mouse movement
     document.addEventListener('mousemove', function(e) {
         mouseX = e.clientX;
         mouseY = e.clientY;
+        mouseGlow.style.opacity = '1';
     });
-
+    
+    // Hide glow when mouse leaves window
+    document.addEventListener('mouseleave', function() {
+        mouseGlow.style.opacity = '0';
+    });
+    
+    // Smooth animation loop for glow following mouse
     function animateGlow() {
         const diffX = mouseX - glowX;
         const diffY = mouseY - glowY;
         
-        glowX += diffX * 0.1;
-        glowY += diffY * 0.1;
+        glowX += diffX * 0.15;
+        glowY += diffY * 0.15;
         
-        cursorGlow.style.left = glowX + 'px';
-        cursorGlow.style.top = glowY + 'px';
+        mouseGlow.style.left = glowX + 'px';
+        mouseGlow.style.top = glowY + 'px';
         
         requestAnimationFrame(animateGlow);
     }
     
     animateGlow();
+}
 
-    // Neural network background
-    createNeuralNetwork();
+// Neural Network Background with current flowing effect
+function initializeNeuralNetwork() {
+    const container = document.querySelector('.neural-bg');
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
     
-    // Smooth scrolling
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
+    // Set canvas size
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    
+    resizeCanvas();
+    container.appendChild(canvas);
+    
+    // Neural network nodes and connections
+    const nodes = [];
+    const connections = [];
+    const nodeCount = 80;
+    const maxDistance = 150;
+    
+    // Create nodes with random positions and velocities
+    for (let i = 0; i < nodeCount; i++) {
+        nodes.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.8,
+            vy: (Math.random() - 0.5) * 0.8,
+            size: Math.random() * 3 + 2,
+            pulse: Math.random() * Math.PI * 2
         });
-    });
+    }
+    
+    // Animation loop
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Update and draw nodes
+        nodes.forEach((node, index) => {
+            // Update position
+            node.x += node.vx;
+            node.y += node.vy;
+            
+            // Bounce off edges
+            if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
+            if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
+            
+            // Keep nodes in bounds
+            node.x = Math.max(0, Math.min(canvas.width, node.x));
+            node.y = Math.max(0, Math.min(canvas.height, node.y));
+            
+            // Update pulse for glowing effect
+            node.pulse += 0.02;
+            
+            // Draw node with pulsing glow
+            const glowIntensity = 0.5 + Math.sin(node.pulse) * 0.3;
+            const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.size * 3);
+            gradient.addColorStop(0, \`rgba(100, 255, 218, \${glowIntensity})\`);
+            gradient.addColorStop(0.5, \`rgba(100, 255, 218, \${glowIntensity * 0.3})\`);
+            gradient.addColorStop(1, 'rgba(100, 255, 218, 0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, node.size * 3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Draw core node
+            ctx.fillStyle = \`rgba(100, 255, 218, \${glowIntensity})\`;
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        
+        // Draw connections with current flow effect
+        connections.length = 0; // Clear previous connections
+        
+        nodes.forEach((nodeA, i) => {
+            nodes.slice(i + 1).forEach((nodeB) => {
+                const dx = nodeA.x - nodeB.x;
+                const dy = nodeA.y - nodeB.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < maxDistance) {
+                    const opacity = (maxDistance - distance) / maxDistance * 0.4;
+                    const flowOffset = (Date.now() * 0.001) % 1;
+                    
+                    // Create gradient for current flow effect
+                    const gradient = ctx.createLinearGradient(nodeA.x, nodeA.y, nodeB.x, nodeB.y);
+                    const flowPosition = (Math.sin(Date.now() * 0.002 + distance * 0.01) + 1) / 2;
+                    
+                    gradient.addColorStop(0, \`rgba(100, 255, 218, 0)\`);
+                    gradient.addColorStop(Math.max(0, flowPosition - 0.1), \`rgba(100, 255, 218, 0)\`);
+                    gradient.addColorStop(flowPosition, \`rgba(255, 215, 0, \${opacity * 2})\`);
+                    gradient.addColorStop(Math.min(1, flowPosition + 0.1), \`rgba(100, 255, 218, \${opacity})\`);
+                    gradient.addColorStop(1, \`rgba(100, 255, 218, \${opacity * 0.5})\`);
+                    
+                    // Draw connection line
+                    ctx.strokeStyle = gradient;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(nodeA.x, nodeA.y);
+                    ctx.lineTo(nodeB.x, nodeB.y);
+                    ctx.stroke();
+                    
+                    // Add flowing particles along connections
+                    const particleCount = 3;
+                    for (let p = 0; p < particleCount; p++) {
+                        const progress = (flowOffset + p / particleCount) % 1;
+                        const particleX = nodeA.x + (nodeB.x - nodeA.x) * progress;
+                        const particleY = nodeA.y + (nodeB.y - nodeA.y) * progress;
+                        
+                        ctx.fillStyle = \`rgba(255, 215, 0, \${opacity * 3})\`;
+                        ctx.beginPath();
+                        ctx.arc(particleX, particleY, 1.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            });
+        });
+        
+        requestAnimationFrame(animate);
+    }
+    
+    // Start animation
+    animate();
+    
+    // Handle window resize
+    window.addEventListener('resize', resizeCanvas);
+}
 
-    // Scroll animations
+// Scroll animations
+function initializeScrollAnimations() {
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -1555,25 +1740,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, observerOptions);
 
-    document.querySelectorAll('.scroll-animate').forEach(el => {
-        observer.observe(el);
-    });
-
-    // Add scroll animation classes
+    // Add scroll animation to sections
     document.querySelectorAll('section').forEach(section => {
         section.classList.add('scroll-animate');
+        observer.observe(section);
     });
+}
 
-    // Skill progress animation
+// Skill progress bar animations
+function initializeSkillAnimations() {
     const skillBars = document.querySelectorAll('.skill-progress-bar');
     const skillObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                const width = entry.target.style.width;
+                const width = entry.target.getAttribute('data-width');
                 entry.target.style.width = '0%';
                 setTimeout(() => {
                     entry.target.style.width = width;
-                }, 200);
+                }, 300);
             }
         });
     }, { threshold: 0.5 });
@@ -1581,99 +1765,100 @@ document.addEventListener('DOMContentLoaded', function() {
     skillBars.forEach(bar => {
         skillObserver.observe(bar);
     });
-});
-
-// Neural network background
-function createNeuralNetwork() {
-    const container = document.querySelector('.neural-network');
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    container.appendChild(canvas);
-    
-    const nodes = [];
-    const connections = [];
-    const nodeCount = 50;
-    
-    // Create nodes
-    for (let i = 0; i < nodeCount; i++) {
-        nodes.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * 0.5,
-            vy: (Math.random() - 0.5) * 0.5,
-            size: Math.random() * 3 + 1
-        });
-    }
-    
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Update and draw nodes
-        nodes.forEach(node => {
-            node.x += node.vx;
-            node.y += node.vy;
-            
-            // Bounce off edges
-            if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
-            if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
-            
-            // Draw node
-            ctx.beginPath();
-            ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(100, 255, 218, 0.6)';
-            ctx.fill();
-        });
-        
-        // Draw connections
-        nodes.forEach((node, i) => {
-            nodes.slice(i + 1).forEach(otherNode => {
-                const dx = node.x - otherNode.x;
-                const dy = node.y - otherNode.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                if (distance < 100) {
-                    ctx.beginPath();
-                    ctx.moveTo(node.x, node.y);
-                    ctx.lineTo(otherNode.x, otherNode.y);
-                    ctx.strokeStyle = \`rgba(100, 255, 218, \${(100 - distance) / 100 * 0.2})\`;
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
-                }
-            });
-        });
-        
-        requestAnimationFrame(animate);
-    }
-    
-    animate();
-    
-    // Resize handler
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
 }
 
-// Utility functions
-function scrollToSection(sectionId) {
-    const section = document.getElementById(sectionId);
-    if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
-    }
-}
-
+// Download resume functionality
 function downloadResume() {
     const resumeData = '${personal.resume || ''}';
-    if (resumeData) {
+    if (resumeData && resumeData.startsWith('data:')) {
         const link = document.createElement('a');
         link.href = resumeData;
         link.download = '${personal.name || 'resume'}_resume.pdf';
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
+    } else {
+        // Show message if no resume available
+        const notification = document.createElement('div');
+        notification.style.cssText = \`
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 25, 47, 0.95);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            border: 2px solid #64ffda;
+            z-index: 10000;
+            font-family: Inter, sans-serif;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        \`;
+        notification.textContent = 'Resume not available for download';
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 3000);
     }
-}`;
+}
+
+// Utility function for smooth scrolling to sections
+function scrollToSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (section) {
+        const offsetTop = section.offsetTop - 80;
+        window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+        });
+    }
+}
+
+// Add some interactive effects for better UX
+document.addEventListener('mouseover', function(e) {
+    // Add glow effect to buttons and links
+    if (e.target.matches('.btn, .nav-link, .contact-link, .project-link, .blog-link, .cert-link')) {
+        e.target.style.transform = 'translateY(-2px)';
+    }
+});
+
+document.addEventListener('mouseout', function(e) {
+    // Remove glow effect
+    if (e.target.matches('.btn, .nav-link, .contact-link, .project-link, .blog-link, .cert-link')) {
+        e.target.style.transform = '';
+    }
+});
+
+// Add typing effect to hero title (optional enhancement)
+function typeWriter(element, text, speed = 100) {
+    let i = 0;
+    element.textContent = '';
+    
+    function type() {
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+        }
+    }
+    
+    type();
+}
+
+// Initialize typing effect for hero title after page loads
+window.addEventListener('load', function() {
+    const heroName = document.querySelector('.hero-name');
+    const heroTitle = document.querySelector('.hero-title');
+    
+    if (heroName && heroTitle) {
+        // Add some delay before starting typing effect
+        setTimeout(() => {
+            const originalTitle = heroTitle.textContent;
+            typeWriter(heroTitle, originalTitle, 150);
+        }, 1000);
+    }
+});`;
 
   return {
     'index.html': html,
