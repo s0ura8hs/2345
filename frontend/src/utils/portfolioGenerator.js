@@ -10,18 +10,19 @@ export const generatePortfolioFiles = (formData) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${personal.name || 'Portfolio'}</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="cursor-glow"></div>
-    <div class="neural-network"></div>
+    <div class="mouse-glow"></div>
+    <div class="neural-bg"></div>
     
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="nav-container">
             <div class="nav-logo">
                 <h2>${personal.name || 'Portfolio'}</h2>
             </div>
-            <div class="nav-menu">
+            <div class="nav-menu" id="nav-menu">
                 <a href="#home" class="nav-link">Home</a>
                 <a href="#about" class="nav-link">About</a>
                 <a href="#skills" class="nav-link">Skills</a>
@@ -29,7 +30,12 @@ export const generatePortfolioFiles = (formData) => {
                 ${projects.length > 0 ? '<a href="#projects" class="nav-link">Projects</a>' : ''}
                 ${blogs.length > 0 ? '<a href="#blogs" class="nav-link">Blogs</a>' : ''}
                 <a href="#contact" class="nav-link">Contact</a>
-                ${personal.resume ? '<a href="#" class="nav-link download-resume" onclick="downloadResume()">Download Resume</a>' : ''}
+                ${personal.resume ? '<a href="#" class="nav-link download-resume" onclick="downloadResume()">📄 Download Resume</a>' : ''}
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
     </nav>
@@ -39,11 +45,14 @@ export const generatePortfolioFiles = (formData) => {
         <div class="hero-content">
             <h1 class="hero-name">${personal.name || 'Your Name'}</h1>
             <p class="hero-title">${personal.position || 'Your Position'}</p>
-            <p class="hero-description">${personal.about || 'Your description'}</p>
+            <p class="hero-description">${personal.about || 'Crafting digital experiences with interactive effects and cutting-edge technologies'}</p>
             <div class="hero-buttons">
                 ${projects.length > 0 ? '<button class="btn btn-primary" onclick="scrollToSection(\'projects\')">View My Work</button>' : ''}
                 <button class="btn btn-outline" onclick="scrollToSection('contact')">Get In Touch</button>
             </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-arrow">↓</div>
         </div>
     </section>
 
@@ -53,14 +62,18 @@ export const generatePortfolioFiles = (formData) => {
             <h2 class="section-title">About Me</h2>
             <div class="about-content">
                 <div class="about-text">
-                    <h3 class="about-subtitle">${personal.position || 'Professional Title'}</h3>
-                    <p class="about-description">${personal.about || 'About description'}</p>
+                    <h3 class="about-subtitle">Passionate Developer & Creative ${personal.position ? personal.position.split(' ').pop() : 'Professional'}</h3>
+                    <p class="about-description">${personal.about || 'I\'m a full-stack developer who believes in creating not just functional applications, but digital experiences that captivate and inspire. With expertise in modern web technologies and a keen eye for interactive design, I bring ideas to life through code.'}</p>
+                    <div class="about-additional">
+                        <p>Beyond coding, I'm passionate about photography, capturing moments that tell stories and exploring the intersection of technology and art. This creative perspective enhances my approach to software development and user experience design.</p>
+                    </div>
                     <div class="about-tags">
-                        ${skills.slice(0, 6).map(skill => `<span class="tag">${skill.name}</span>`).join('')}
+                        ${skills.slice(0, 8).map(skill => `<span class="tag">${skill.name}</span>`).join('')}
+                        ${skills.length === 0 ? '<span class="tag">JavaScript</span><span class="tag">React</span><span class="tag">Node.js</span><span class="tag">Python</span><span class="tag">UI/UX</span><span class="tag">Photography</span>' : ''}
                     </div>
                 </div>
                 <div class="about-image">
-                    ${personal.profilePhoto ? `<img src="${personal.profilePhoto}" alt="${personal.name}" class="profile-img">` : '<div class="profile-placeholder">No Image</div>'}
+                    ${personal.profilePhoto ? `<img src="${personal.profilePhoto}" alt="${personal.name}" class="profile-img">` : '<div class="profile-placeholder"><div class="placeholder-content"><span>📷</span><p>Profile Photo</p></div></div>'}
                 </div>
             </div>
         </div>
@@ -71,17 +84,93 @@ export const generatePortfolioFiles = (formData) => {
         <div class="container">
             <h2 class="section-title">Skills & Expertise</h2>
             <div class="skills-grid">
-                ${skills.map(skill => `
-                    <div class="skill-item">
-                        <div class="skill-header">
-                            <span class="skill-name">${skill.name}</span>
-                            <span class="skill-percentage">${skill.percentage}%</span>
-                        </div>
-                        <div class="skill-progress">
-                            <div class="skill-progress-bar" style="width: ${skill.percentage}%"></div>
+                ${skills.length > 0 ? skills.map(skill => `
+                    <div class="skill-item" data-skill="${skill.percentage}">
+                        <div class="skill-icon">🔥</div>
+                        <div class="skill-content">
+                            <div class="skill-header">
+                                <span class="skill-name">${skill.name}</span>
+                                <span class="skill-percentage">${skill.percentage}%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar" data-width="${skill.percentage}%"></div>
+                            </div>
                         </div>
                     </div>
-                `).join('')}
+                `).join('') : `
+                    <div class="skill-item" data-skill="95">
+                        <div class="skill-icon">🔥</div>
+                        <div class="skill-content">
+                            <div class="skill-header">
+                                <span class="skill-name">Frontend Development</span>
+                                <span class="skill-percentage">95%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar" data-width="95%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skill-item" data-skill="90">
+                        <div class="skill-icon">⚙️</div>
+                        <div class="skill-content">
+                            <div class="skill-header">
+                                <span class="skill-name">Backend Development</span>
+                                <span class="skill-percentage">90%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar" data-width="90%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skill-item" data-skill="85">
+                        <div class="skill-icon">🗄️</div>
+                        <div class="skill-content">
+                            <div class="skill-header">
+                                <span class="skill-name">Database Design</span>
+                                <span class="skill-percentage">85%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar" data-width="85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skill-item" data-skill="92">
+                        <div class="skill-icon">🔗</div>
+                        <div class="skill-content">
+                            <div class="skill-header">
+                                <span class="skill-name">API Integration</span>
+                                <span class="skill-percentage">92%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar" data-width="92%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skill-item" data-skill="88">
+                        <div class="skill-icon">📷</div>
+                        <div class="skill-content">
+                            <div class="skill-header">
+                                <span class="skill-name">Photography</span>
+                                <span class="skill-percentage">88%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar" data-width="88%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skill-item" data-skill="85">
+                        <div class="skill-icon">✨</div>
+                        <div class="skill-content">
+                            <div class="skill-header">
+                                <span class="skill-name">UI/UX Design</span>
+                                <span class="skill-percentage">85%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar" data-width="85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `}
             </div>
         </div>
     </section>
@@ -92,26 +181,76 @@ export const generatePortfolioFiles = (formData) => {
             <h2 class="section-title">Education & Certifications</h2>
             <div class="education-grid">
                 <div class="education-column">
-                    <h3 class="column-title">Education</h3>
-                    ${education.map(edu => `
+                    <div class="column-header">
+                        <div class="column-icon">🎓</div>
+                        <h3 class="column-title">Education</h3>
+                    </div>
+                    ${education.length > 0 ? education.map(edu => `
                         <div class="education-item">
-                            <h4 class="education-title">${edu.degree}</h4>
-                            <p class="education-institution">${edu.institution}</p>
-                            <p class="education-year">${edu.year}</p>
-                            ${edu.description ? `<p class="education-description">${edu.description}</p>` : ''}
+                            <div class="education-icon">📚</div>
+                            <div class="education-content">
+                                <h4 class="education-title">${edu.degree}</h4>
+                                <p class="education-institution">${edu.institution}</p>
+                                <p class="education-year">${edu.year}</p>
+                                ${edu.description ? `<p class="education-description">${edu.description}</p>` : ''}
+                            </div>
                         </div>
-                    `).join('')}
+                    `).join('') : `
+                        <div class="education-item">
+                            <div class="education-icon">📚</div>
+                            <div class="education-content">
+                                <h4 class="education-title">Bachelor of Science in Computer Science</h4>
+                                <p class="education-institution">Tech University</p>
+                                <p class="education-year">2018 - 2022</p>
+                                <p class="education-description">Focused on software engineering, algorithms, and web development</p>
+                            </div>
+                        </div>
+                        <div class="education-item">
+                            <div class="education-icon">📚</div>
+                            <div class="education-content">
+                                <h4 class="education-title">Master of Science in Software Engineering</h4>
+                                <p class="education-institution">Advanced Tech Institute</p>
+                                <p class="education-year">2022 - 2024</p>
+                                <p class="education-description">Specialized in full-stack development and system architecture</p>
+                            </div>
+                        </div>
+                    `}
                 </div>
                 <div class="education-column">
-                    <h3 class="column-title">Certifications</h3>
-                    ${certificates.map(cert => `
+                    <div class="column-header">
+                        <div class="column-icon">🏆</div>
+                        <h3 class="column-title">Certifications</h3>
+                    </div>
+                    ${certificates.length > 0 ? certificates.map(cert => `
                         <div class="education-item">
-                            <h4 class="education-title">${cert.name}</h4>
-                            <p class="education-institution">${cert.issuer}</p>
-                            <p class="education-year">${cert.year}</p>
-                            ${cert.link ? `<a href="${cert.link}" target="_blank" class="cert-link">View Certificate</a>` : ''}
+                            <div class="education-icon">🏅</div>
+                            <div class="education-content">
+                                <h4 class="education-title">${cert.name}</h4>
+                                <p class="education-institution">${cert.issuer}</p>
+                                <p class="education-year">${cert.year}</p>
+                                ${cert.link ? `<a href="${cert.link}" target="_blank" class="cert-link">🔗 View Certificate</a>` : ''}
+                            </div>
                         </div>
-                    `).join('')}
+                    `).join('') : `
+                        <div class="education-item">
+                            <div class="education-icon">🏅</div>
+                            <div class="education-content">
+                                <h4 class="education-title">AWS Certified Developer</h4>
+                                <p class="education-institution">Amazon Web Services</p>
+                                <p class="education-year">2023</p>
+                                <a href="#" class="cert-link">🔗 View Certificate</a>
+                            </div>
+                        </div>
+                        <div class="education-item">
+                            <div class="education-icon">🏅</div>
+                            <div class="education-content">
+                                <h4 class="education-title">Professional Photography Certificate</h4>
+                                <p class="education-institution">Photography Academy</p>
+                                <p class="education-year">2021</p>
+                                <a href="#" class="cert-link">🔗 View Certificate</a>
+                            </div>
+                        </div>
+                    `}
                 </div>
             </div>
         </div>
@@ -125,14 +264,14 @@ export const generatePortfolioFiles = (formData) => {
             <div class="projects-grid">
                 ${projects.map(project => `
                     <div class="project-card">
-                        ${project.image ? `<img src="${project.image}" alt="${project.name}" class="project-image">` : ''}
+                        ${project.image ? `<div class="project-image-container"><img src="${project.image}" alt="${project.name}" class="project-image"></div>` : '<div class="project-image-placeholder"><span>📱</span><p>Project Image</p></div>'}
                         <div class="project-content">
                             <h3 class="project-title">${project.name}</h3>
                             <p class="project-description">${project.description}</p>
                             ${project.technologies ? `<div class="project-tech">${project.technologies.split(',').map(tech => `<span class="tech-tag">${tech.trim()}</span>`).join('')}</div>` : ''}
                             <div class="project-links">
-                                ${project.liveLink ? `<a href="${project.liveLink}" target="_blank" class="project-link">Live Demo</a>` : ''}
-                                ${project.githubLink ? `<a href="${project.githubLink}" target="_blank" class="project-link">GitHub</a>` : ''}
+                                ${project.liveLink ? `<a href="${project.liveLink}" target="_blank" class="project-link primary">Live Demo</a>` : ''}
+                                ${project.githubLink ? `<a href="${project.githubLink}" target="_blank" class="project-link secondary">GitHub</a>` : ''}
                             </div>
                         </div>
                     </div>
@@ -150,13 +289,11 @@ export const generatePortfolioFiles = (formData) => {
             <div class="blogs-grid">
                 ${blogs.map(blog => `
                     <div class="blog-card">
-                        ${blog.image ? `<img src="${blog.image}" alt="${blog.title}" class="blog-image">` : ''}
+                        ${blog.image ? `<div class="blog-image-container"><img src="${blog.image}" alt="${blog.title}" class="blog-image"></div>` : '<div class="blog-image-placeholder"><span>📝</span><p>Blog Image</p></div>'}
                         <div class="blog-content">
                             <h3 class="blog-title">${blog.title}</h3>
                             <p class="blog-description">${blog.description}</p>
-                            <div class="blog-links">
-                                <a href="${blog.link}" target="_blank" class="blog-link">Read More</a>
-                            </div>
+                            <a href="${blog.link}" target="_blank" class="blog-link">Read More →</a>
                         </div>
                     </div>
                 `).join('')}
@@ -172,18 +309,9 @@ export const generatePortfolioFiles = (formData) => {
             <div class="contact-content">
                 <p class="contact-description">Let's connect and discuss opportunities!</p>
                 <div class="contact-links">
-                    <a href="mailto:${contact.email}" class="contact-link">
-                        <span class="contact-icon">📧</span>
-                        Email
-                    </a>
-                    <a href="${contact.github}" target="_blank" class="contact-link">
-                        <span class="contact-icon">🐙</span>
-                        GitHub
-                    </a>
-                    <a href="${contact.linkedin}" target="_blank" class="contact-link">
-                        <span class="contact-icon">💼</span>
-                        LinkedIn
-                    </a>
+                    ${contact.email ? `<a href="mailto:${contact.email}" class="contact-link"><span class="contact-icon">📧</span><span>Email</span></a>` : '<a href="mailto:contact@example.com" class="contact-link"><span class="contact-icon">📧</span><span>Email</span></a>'}
+                    ${contact.github ? `<a href="${contact.github}" target="_blank" class="contact-link"><span class="contact-icon">🐙</span><span>GitHub</span></a>` : '<a href="#" class="contact-link"><span class="contact-icon">🐙</span><span>GitHub</span></a>'}
+                    ${contact.linkedin ? `<a href="${contact.linkedin}" target="_blank" class="contact-link"><span class="contact-icon">💼</span><span>LinkedIn</span></a>` : '<a href="#" class="contact-link"><span class="contact-icon">💼</span><span>LinkedIn</span></a>'}
                 </div>
             </div>
         </div>
