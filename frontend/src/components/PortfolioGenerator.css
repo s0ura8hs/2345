@@ -116,6 +116,16 @@
   align-items: center;
   position: relative;
   z-index: 2;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.progress-step:hover {
+  transform: translateY(-2px);
+}
+
+.progress-step:hover .step-number {
+  box-shadow: 0 0 15px rgba(255,215,0,0.3);
 }
 
 .step-number {
