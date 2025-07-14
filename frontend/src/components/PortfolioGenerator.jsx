@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import PersonalInfoForm from './forms/PersonalInfoForm';
 import SkillsForm from './forms/SkillsForm';
 import EducationForm from './forms/EducationForm';
+import ExperienceForm from './forms/ExperienceForm';
 import ProjectsForm from './forms/ProjectsForm';
 import BlogsForm from './forms/BlogsForm';
 import ContactForm from './forms/ContactForm';
@@ -26,6 +27,7 @@ const PortfolioGenerator = () => {
     skills: [],
     education: [],
     certificates: [],
+    experience: [],  // NEW: Added experience array
     projects: [],
     blogs: [],
     contact: {
@@ -39,6 +41,7 @@ const PortfolioGenerator = () => {
     { title: 'Personal Info', component: PersonalInfoForm },
     { title: 'Skills', component: SkillsForm },
     { title: 'Education', component: EducationForm },
+    { title: 'Experience', component: ExperienceForm },  // NEW: Added experience step
     { title: 'Projects', component: ProjectsForm },
     { title: 'Blogs', component: BlogsForm },
     { title: 'Contact', component: ContactForm }
