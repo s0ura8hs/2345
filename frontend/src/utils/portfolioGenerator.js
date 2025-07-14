@@ -4,12 +4,13 @@ export const generatePortfolioFiles = (formData) => {
 
   // Helper function to get display items with View More functionality
   const getDisplayItems = (items, maxItems = 5) => {
+    if (!items || !Array.isArray(items)) return [];
     return items.slice(0, maxItems);
   };
 
   // Helper function to create View More section
   const createViewMoreSection = (items, sectionName, maxItems = 5) => {
-    if (items.length <= maxItems) return '';
+    if (!items || !Array.isArray(items) || items.length <= maxItems) return '';
     
     return `
       <div class="view-more-section">
@@ -31,9 +32,9 @@ export const generatePortfolioFiles = (formData) => {
           <div class="education-item">
             <div class="education-icon">📚</div>
             <div class="education-content">
-              <h4 class="education-title">${item.degree}</h4>
-              <p class="education-institution">${item.institution}</p>
-              <p class="education-year">${item.year}</p>
+              <h4 class="education-title">${item.degree || ''}</h4>
+              <p class="education-institution">${item.institution || ''}</p>
+              <p class="education-year">${item.year || ''}</p>
               ${item.description ? `<p class="education-description">${item.description}</p>` : ''}
             </div>
           </div>
@@ -43,9 +44,9 @@ export const generatePortfolioFiles = (formData) => {
           <div class="education-item">
             <div class="education-icon">🏅</div>
             <div class="education-content">
-              <h4 class="education-title">${item.name}</h4>
-              <p class="education-institution">${item.issuer}</p>
-              <p class="education-year">${item.year}</p>
+              <h4 class="education-title">${item.name || ''}</h4>
+              <p class="education-institution">${item.issuer || ''}</p>
+              <p class="education-year">${item.year || ''}</p>
               ${item.link ? `<a href="${item.link}" target="_blank" class="cert-link">🔗 View Certificate</a>` : ''}
             </div>
           </div>
@@ -56,12 +57,12 @@ export const generatePortfolioFiles = (formData) => {
             <div class="experience-header">
               ${item.companyLogo ? `<img src="${item.companyLogo}" alt="${item.company}" class="company-logo">` : '<div class="company-logo-placeholder">🏢</div>'}
               <div class="experience-info">
-                <h3 class="experience-position">${item.position}</h3>
-                <p class="experience-company">${item.company}</p>
-                <p class="experience-duration">${item.duration}</p>
+                <h3 class="experience-position">${item.position || ''}</h3>
+                <p class="experience-company">${item.company || ''}</p>
+                <p class="experience-duration">${item.duration || ''}</p>
               </div>
             </div>
-            <p class="experience-description">${item.description}</p>
+            <p class="experience-description">${item.description || ''}</p>
           </div>
         `;
       case 'projects':
@@ -69,8 +70,8 @@ export const generatePortfolioFiles = (formData) => {
           <div class="project-card">
             ${item.image ? `<div class="project-image-container"><img src="${item.image}" alt="${item.name}" class="project-image"></div>` : '<div class="project-image-placeholder"><span>📱</span><p>Project Image</p></div>'}
             <div class="project-content">
-              <h3 class="project-title">${item.name}</h3>
-              <p class="project-description">${item.description}</p>
+              <h3 class="project-title">${item.name || ''}</h3>
+              <p class="project-description">${item.description || ''}</p>
               ${item.technologies ? `<div class="project-tech">${item.technologies.split(',').map(tech => `<span class="tech-tag">${tech.trim()}</span>`).join('')}</div>` : ''}
               <div class="project-links">
                 ${item.liveLink ? `<a href="${item.liveLink}" target="_blank" class="project-link primary">Live Demo</a>` : ''}
@@ -84,9 +85,9 @@ export const generatePortfolioFiles = (formData) => {
           <div class="blog-card">
             ${item.image ? `<div class="blog-image-container"><img src="${item.image}" alt="${item.title}" class="blog-image"></div>` : '<div class="blog-image-placeholder"><span>📝</span><p>Blog Image</p></div>'}
             <div class="blog-content">
-              <h3 class="blog-title">${item.title}</h3>
-              <p class="blog-description">${item.description}</p>
-              <a href="${item.link}" target="_blank" class="blog-link">Read More →</a>
+              <h3 class="blog-title">${item.title || ''}</h3>
+              <p class="blog-description">${item.description || ''}</p>
+              <a href="${item.link || '#'}" target="_blank" class="blog-link">Read More →</a>
             </div>
           </div>
         `;
@@ -120,9 +121,9 @@ export const generatePortfolioFiles = (formData) => {
                 <a href="#about" class="nav-link">About</a>
                 <a href="#skills" class="nav-link">Skills</a>
                 <a href="#education" class="nav-link">Education</a>
-                ${experience.length > 0 ? '<a href="#experience" class="nav-link">Experience</a>' : ''}
-                ${projects.length > 0 ? '<a href="#projects" class="nav-link">Projects</a>' : ''}
-                ${blogs.length > 0 ? '<a href="#blogs" class="nav-link">Blogs</a>' : ''}
+                ${experience && experience.length > 0 ? '<a href="#experience" class="nav-link">Experience</a>' : ''}
+                ${projects && projects.length > 0 ? '<a href="#projects" class="nav-link">Projects</a>' : ''}
+                ${blogs && blogs.length > 0 ? '<a href="#blogs" class="nav-link">Blogs</a>' : ''}
                 <a href="#contact" class="nav-link">Contact</a>
                 ${personal.resume ? '<a href="#" class="nav-link download-resume" onclick="downloadResume()">📄 Download Resume</a>' : ''}
             </div>
@@ -141,7 +142,7 @@ export const generatePortfolioFiles = (formData) => {
             <p class="hero-title">${personal.position || 'Your Position'}</p>
             <p class="hero-description">${personal.about || 'Crafting digital experiences with interactive effects and cutting-edge technologies'}</p>
             <div class="hero-buttons">
-                ${projects.length > 0 ? '<button class="btn btn-primary" onclick="scrollToSection(\'projects\')">View My Work</button>' : ''}
+                ${projects && projects.length > 0 ? '<button class="btn btn-primary" onclick="scrollToSection(\'projects\')">View My Work</button>' : ''}
                 <button class="btn btn-outline" onclick="scrollToSection('contact')">Get In Touch</button>
             </div>
         </div>
@@ -159,11 +160,10 @@ export const generatePortfolioFiles = (formData) => {
                     <h3 class="about-subtitle">Passionate Developer & Creative ${personal.position ? personal.position.split(' ').pop() : 'Professional'}</h3>
                     <p class="about-description">${personal.about || 'I\'m a full-stack developer who believes in creating not just functional applications, but digital experiences that captivate and inspire. With expertise in modern web technologies and a keen eye for interactive design, I bring ideas to life through code.'}</p>
                     <div class="about-additional">
-                        <p>Beyond coding, I'm passionate about photography, capturing moments that tell stories and exploring the intersection of technology and art. This creative perspective enhances my approach to software development and user experience design.</p>
+                        <p>Beyond coding, I'm passionate about technology and exploring new innovations. This creative perspective enhances my approach to software development and user experience design.</p>
                     </div>
                     <div class="about-tags">
-                        ${skills.slice(0, 8).map(skill => `<span class="tag">${skill.name}</span>`).join('')}
-                        ${skills.length === 0 ? '<span class="tag">JavaScript</span><span class="tag">React</span><span class="tag">Node.js</span><span class="tag">Python</span><span class="tag">UI/UX</span><span class="tag">Photography</span>' : ''}
+                        ${skills && skills.length > 0 ? skills.slice(0, 8).map(skill => `<span class="tag">${skill.name}</span>`).join('') : '<span class="tag">JavaScript</span><span class="tag">React</span><span class="tag">Node.js</span><span class="tag">Python</span><span class="tag">UI/UX</span><span class="tag">Web Development</span>'}
                     </div>
                 </div>
                 <div class="about-image">
@@ -178,7 +178,7 @@ export const generatePortfolioFiles = (formData) => {
         <div class="container">
             <h2 class="section-title">Skills & Expertise</h2>
             <div class="skills-grid">
-                ${skills.length > 0 ? skills.map(skill => `
+                ${skills && skills.length > 0 ? skills.map(skill => `
                     <div class="skill-item" data-skill="${skill.percentage}">
                         <div class="skill-icon">🔥</div>
                         <div class="skill-content">
@@ -216,6 +216,30 @@ export const generatePortfolioFiles = (formData) => {
                             </div>
                         </div>
                     </div>
+                    <div class="skill-item" data-skill="85">
+                        <div class="skill-icon">🗄️</div>
+                        <div class="skill-content">
+                            <div class="skill-header">
+                                <span class="skill-name">Database Design</span>
+                                <span class="skill-percentage">85%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar" data-width="85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skill-item" data-skill="92">
+                        <div class="skill-icon">🔗</div>
+                        <div class="skill-content">
+                            <div class="skill-header">
+                                <span class="skill-name">API Integration</span>
+                                <span class="skill-percentage">92%</span>
+                            </div>
+                            <div class="skill-progress">
+                                <div class="skill-progress-bar" data-width="92%"></div>
+                            </div>
+                        </div>
+                    </div>
                 `}
             </div>
         </div>
@@ -231,7 +255,7 @@ export const generatePortfolioFiles = (formData) => {
                         <div class="column-icon">🎓</div>
                         <h3 class="column-title">Education</h3>
                     </div>
-                    ${education.length > 0 ? `
+                    ${education && education.length > 0 ? `
                         ${getDisplayItems(education).map(edu => renderItemByType(edu, 'education')).join('')}
                         ${createViewMoreSection(education, 'education')}
                     ` : `
@@ -244,6 +268,15 @@ export const generatePortfolioFiles = (formData) => {
                                 <p class="education-description">Focused on software engineering, algorithms, and web development</p>
                             </div>
                         </div>
+                        <div class="education-item">
+                            <div class="education-icon">📚</div>
+                            <div class="education-content">
+                                <h4 class="education-title">Master of Science in Software Engineering</h4>
+                                <p class="education-institution">Advanced Tech Institute</p>
+                                <p class="education-year">2022 - 2024</p>
+                                <p class="education-description">Specialized in full-stack development and system architecture</p>
+                            </div>
+                        </div>
                     `}
                 </div>
                 <div class="education-column">
@@ -251,7 +284,7 @@ export const generatePortfolioFiles = (formData) => {
                         <div class="column-icon">🏆</div>
                         <h3 class="column-title">Certifications</h3>
                     </div>
-                    ${certificates.length > 0 ? `
+                    ${certificates && certificates.length > 0 ? `
                         ${getDisplayItems(certificates).map(cert => renderItemByType(cert, 'certificates')).join('')}
                         ${createViewMoreSection(certificates, 'certificates')}
                     ` : `
@@ -264,14 +297,23 @@ export const generatePortfolioFiles = (formData) => {
                                 <a href="#" class="cert-link">🔗 View Certificate</a>
                             </div>
                         </div>
+                        <div class="education-item">
+                            <div class="education-icon">🏅</div>
+                            <div class="education-content">
+                                <h4 class="education-title">Professional Web Development Certificate</h4>
+                                <p class="education-institution">Tech Academy</p>
+                                <p class="education-year">2021</p>
+                                <a href="#" class="cert-link">🔗 View Certificate</a>
+                            </div>
+                        </div>
                     `}
                 </div>
             </div>
         </div>
     </section>
 
-    ${experience.length > 0 ? `
-    <!-- Experience Section -->
+    ${experience && experience.length > 0 ? `
+    <!-- Experience Section - Only show if there are experiences -->
     <section id="experience" class="experience">
         <div class="container">
             <h2 class="section-title">Work Experience</h2>
@@ -283,7 +325,7 @@ export const generatePortfolioFiles = (formData) => {
     </section>
     ` : ''}
 
-    ${projects.length > 0 ? `
+    ${projects && projects.length > 0 ? `
     <!-- Projects Section -->
     <section id="projects" class="projects">
         <div class="container">
@@ -296,7 +338,7 @@ export const generatePortfolioFiles = (formData) => {
     </section>
     ` : ''}
 
-    ${blogs.length > 0 ? `
+    ${blogs && blogs.length > 0 ? `
     <!-- Blogs Section -->
     <section id="blogs" class="blogs">
         <div class="container">
@@ -335,7 +377,7 @@ export const generatePortfolioFiles = (formData) => {
 </body>
 </html>`;
 
-  // Generate CSS (existing CSS plus new Experience section styles)
+  // Generate CSS
   const css = `/* Reset and Base Styles */
 * {
     margin: 0;
@@ -609,164 +651,35 @@ body {
     box-shadow: 0 6px 20px rgba(100, 255, 218, 0.3);
 }
 
-/* Experience Section */
-.experience {
-    background: rgba(17, 34, 64, 0.3);
-    position: relative;
-}
-
-.experience-timeline {
-    max-width: 1000px;
-    margin: 0 auto;
-    position: relative;
-}
-
-.experience-timeline::before {
-    content: '';
+.scroll-indicator {
     position: absolute;
+    bottom: 2rem;
     left: 50%;
     transform: translateX(-50%);
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: linear-gradient(180deg, #64ffda, #ffd700);
+    animation: bounce 2s infinite;
 }
 
-.experience-item {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(100, 255, 218, 0.2);
-    border-radius: 20px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    position: relative;
-    width: 45%;
-    transition: all 0.3s ease;
-}
-
-.experience-item:nth-child(odd) {
-    margin-left: 0;
-    margin-right: auto;
-}
-
-.experience-item:nth-child(even) {
-    margin-left: auto;
-    margin-right: 0;
-}
-
-.experience-item::before {
-    content: '';
-    position: absolute;
-    top: 2rem;
-    width: 20px;
-    height: 20px;
-    background: linear-gradient(45deg, #64ffda, #ffd700);
-    border-radius: 50%;
-    box-shadow: 0 0 0 4px rgba(10, 25, 47, 1);
-}
-
-.experience-item:nth-child(odd)::before {
-    right: -60px;
-}
-
-.experience-item:nth-child(even)::before {
-    left: -60px;
-}
-
-.experience-item:hover {
-    transform: translateY(-10px);
-    border-color: rgba(100, 255, 218, 0.4);
-    box-shadow: 0 15px 30px rgba(100, 255, 218, 0.2);
-}
-
-.experience-header {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.company-logo {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    background: white;
-    border-radius: 8px;
-    padding: 5px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.company-logo-placeholder {
-    width: 60px;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.experience-info {
-    flex: 1;
-}
-
-.experience-position {
-    color: #ffffff;
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin: 0 0 0.5rem 0;
-    line-height: 1.3;
-}
-
-.experience-company {
+.scroll-arrow {
+    font-size: 2rem;
     color: #64ffda;
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin: 0 0 0.5rem 0;
+    opacity: 0.7;
 }
 
-.experience-duration {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
-    margin: 0;
-    font-weight: 500;
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40% { transform: translateX(-50%) translateY(-10px); }
+    60% { transform: translateX(-50%) translateY(-5px); }
 }
 
-.experience-description {
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.6;
-    margin: 0;
-    font-size: 1rem;
-}
-
-/* View More Section */
-.view-more-section {
-    text-align: center;
-    margin: 2rem 0;
-}
-
-.view-more-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(100, 255, 218, 0.3);
-    color: #64ffda;
-    padding: 0.75rem 2rem;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-}
-
-.view-more-btn:hover {
-    background: rgba(100, 255, 218, 0.1);
-    border-color: #64ffda;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(100, 255, 218, 0.2);
-}
-
-.hidden-items {
-    margin-top: 2rem;
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Section Styles */
@@ -1154,6 +1067,137 @@ section {
     transform: translateX(5px);
 }
 
+/* Experience Section */
+.experience {
+    background: rgba(17, 34, 64, 0.3);
+    position: relative;
+}
+
+.experience-timeline {
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.experience-timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, #64ffda, #ffd700);
+}
+
+.experience-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(100, 255, 218, 0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    width: 45%;
+    transition: all 0.3s ease;
+}
+
+.experience-item:nth-child(odd) {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+.experience-item:nth-child(even) {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.experience-item::before {
+    content: '';
+    position: absolute;
+    top: 2rem;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(45deg, #64ffda, #ffd700);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(10, 25, 47, 1);
+}
+
+.experience-item:nth-child(odd)::before {
+    right: -60px;
+}
+
+.experience-item:nth-child(even)::before {
+    left: -60px;
+}
+
+.experience-item:hover {
+    transform: translateY(-10px);
+    border-color: rgba(100, 255, 218, 0.4);
+    box-shadow: 0 15px 30px rgba(100, 255, 218, 0.2);
+}
+
+.experience-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.company-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    background: white;
+    border-radius: 8px;
+    padding: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.company-logo-placeholder {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.experience-info {
+    flex: 1;
+}
+
+.experience-position {
+    color: #ffffff;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.3;
+}
+
+.experience-company {
+    color: #64ffda;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0 0 0.5rem 0;
+}
+
+.experience-duration {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+.experience-description {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    margin: 0;
+    font-size: 1rem;
+}
+
 /* Projects Section */
 .projects {
     position: relative;
@@ -1477,15 +1521,46 @@ section {
     font-size: 1rem;
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* View More Section */
+.view-more-section {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.view-more-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(100, 255, 218, 0.3);
+    color: #64ffda;
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-family: inherit;
+}
+
+.view-more-btn:hover {
+    background: rgba(100, 255, 218, 0.1);
+    border-color: #64ffda;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(100, 255, 218, 0.2);
+}
+
+.hidden-items {
+    margin-top: 2rem;
+}
+
+/* Scroll Animations */
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 1s ease-out;
+}
+
+.scroll-animate.active {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Responsive Design */
@@ -1652,7 +1727,7 @@ section {
     color: #ffffff;
 }`;
 
-  // Generate JavaScript (existing JS plus View More functionality)
+  // Generate JavaScript
   const js = `// Portfolio JavaScript - Enhanced with Neural Network, Mouse Effects & View More
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all effects and functionality
@@ -1739,6 +1814,8 @@ function initializeNavigation() {
 // Mouse glow effect - Silver yellowish glitter following mouse
 function initializeMouseGlow() {
     const mouseGlow = document.querySelector('.mouse-glow');
+    if (!mouseGlow) return;
+    
     let mouseX = 0;
     let mouseY = 0;
     let glowX = 0;
@@ -1776,6 +1853,8 @@ function initializeMouseGlow() {
 // Neural Network Background with current flowing effect
 function initializeNeuralNetwork() {
     const container = document.querySelector('.neural-bg');
+    if (!container) return;
+    
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     
