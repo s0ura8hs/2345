@@ -60,7 +60,8 @@ const PreviewModal = ({ formData, onClose }) => {
                 <a href="#about">About</a>
                 <a href="#skills">Skills</a>
                 <a href="#education">Education</a>
-                {experience.length > 0 && <a href="#experience">Experience</a>}
+                {/* Only show experience link if there are experiences */}
+                {experience && experience.length > 0 && <a href="#experience">Experience</a>}
                 {projects.length > 0 && <a href="#projects">Projects</a>}
                 {blogs.length > 0 && <a href="#blogs">Blogs</a>}
                 <a href="#contact">Contact</a>
@@ -188,8 +189,8 @@ const PreviewModal = ({ formData, onClose }) => {
               </section>
             )}
 
-            {/* Experience Section */}
-            {experience.length > 0 && (
+            {/* Experience Section - Only show if there are experiences */}
+            {experience && experience.length > 0 && (
               <section className="portfolio-experience">
                 <h2 className="section-title">Work Experience</h2>
                 <div className="experience-grid">
