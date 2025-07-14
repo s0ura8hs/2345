@@ -1,9 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import './PreviewModal.css';
 
 const PreviewModal = ({ formData, onClose }) => {
-  const { personal, skills, education, certificates, projects, blogs, contact } = formData;
+  const { personal, skills, education, certificates, experience, projects, blogs, contact } = formData;
+  
+  // State for "View More" functionality
+  const [showMoreEducation, setShowMoreEducation] = useState(false);
+  const [showMoreCertificates, setShowMoreCertificates] = useState(false);
+  const [showMoreExperience, setShowMoreExperience] = useState(false);
+  const [showMoreProjects, setShowMoreProjects] = useState(false);
+  const [showMoreBlogs, setShowMoreBlogs] = useState(false);
+
+  // Helper function to get display items with "View More" functionality
+  const getDisplayItems = (items, showMore) => {
+    return showMore ? items : items.slice(0, 5);
+  };
+
+  const ViewMoreButton = ({ items, showMore, setShowMore, label }) => {
+    if (items.length <= 5) return null;
+    
+    return (
+      <button
+        className="view-more-btn"
+        onClick={() => setShowMore(!showMore)}
+      >
+        {showMore ? 'Show Less' : `View More (${items.length - 5} more ${label})`}
+      </button>
+    );
+  };
 
   return (
     <motion.div
@@ -35,6 +60,7 @@ const PreviewModal = ({ formData, onClose }) => {
                 <a href="#about">About</a>
                 <a href="#skills">Skills</a>
                 <a href="#education">Education</a>
+                {experience.length > 0 && <a href="#experience">Experience</a>}
                 {projects.length > 0 && <a href="#projects">Projects</a>}
                 {blogs.length > 0 && <a href="#blogs">Blogs</a>}
                 <a href="#contact">Contact</a>
@@ -115,14 +141,22 @@ const PreviewModal = ({ formData, onClose }) => {
                   <div className="education-column">
                     <h3 className="column-title">Education</h3>
                     {education.length > 0 ? (
-                      education.map((edu, index) => (
-                        <div key={index} className="education-item">
-                          <h4>{edu.degree}</h4>
-                          <p className="institution">{edu.institution}</p>
-                          <p className="year">{edu.year}</p>
-                          {edu.description && <p className="description">{edu.description}</p>}
-                        </div>
-                      ))
+                      <>
+                        {getDisplayItems(education, showMoreEducation).map((edu, index) => (
+                          <div key={index} className="education-item">
+                            <h4>{edu.degree}</h4>
+                            <p className="institution">{edu.institution}</p>
+                            <p className="year">{edu.year}</p>
+                            {edu.description && <p className="description">{edu.description}</p>}
+                          </div>
+                        ))}
+                        <ViewMoreButton 
+                          items={education} 
+                          showMore={showMoreEducation} 
+                          setShowMore={setShowMoreEducation}
+                          label="entries"
+                        />
+                      </>
                     ) : (
                       <p className="no-data">No education added yet</p>
                     )}
@@ -130,18 +164,56 @@ const PreviewModal = ({ formData, onClose }) => {
                   <div className="education-column">
                     <h3 className="column-title">Certifications</h3>
                     {certificates.length > 0 ? (
-                      certificates.map((cert, index) => (
-                        <div key={index} className="education-item">
-                          <h4>{cert.name}</h4>
-                          <p className="institution">{cert.issuer}</p>
-                          <p className="year">{cert.year}</p>
-                          {cert.link && <a href={cert.link} className="cert-link">View Certificate</a>}
-                        </div>
-                      ))
+                      <>
+                        {getDisplayItems(certificates, showMoreCertificates).map((cert, index) => (
+                          <div key={index} className="education-item">
+                            <h4>{cert.name}</h4>
+                            <p className="institution">{cert.issuer}</p>
+                            <p className="year">{cert.year}</p>
+                            {cert.link && <a href={cert.link} className="cert-link">View Certificate</a>}
+                          </div>
+                        ))}
+                        <ViewMoreButton 
+                          items={certificates} 
+                          showMore={showMoreCertificates} 
+                          setShowMore={setShowMoreCertificates}
+                          label="certificates"
+                        />
+                      </>
                     ) : (
                       <p className="no-data">No certificates added yet</p>
                     )}
                   </div>
+                </div>
+              </section>
+            )}
+
+            {/* Experience Section */}
+            {experience.length > 0 && (
+              <section className="portfolio-experience">
+                <h2 className="section-title">Work Experience</h2>
+                <div className="experience-grid">
+                  {getDisplayItems(experience, showMoreExperience).map((exp, index) => (
+                    <div key={index} className="experience-item">
+                      <div className="experience-header">
+                        {exp.companyLogo && (
+                          <img src={exp.companyLogo} alt={exp.company} className="company-logo" />
+                        )}
+                        <div className="experience-info">
+                          <h3 className="position">{exp.position}</h3>
+                          <p className="company">{exp.company}</p>
+                          <p className="duration">{exp.duration}</p>
+                        </div>
+                      </div>
+                      <p className="experience-description">{exp.description}</p>
+                    </div>
+                  ))}
+                  <ViewMoreButton 
+                    items={experience} 
+                    showMore={showMoreExperience} 
+                    setShowMore={setShowMoreExperience}
+                    label="experiences"
+                  />
                 </div>
               </section>
             )}
@@ -151,7 +223,7 @@ const PreviewModal = ({ formData, onClose }) => {
               <section className="portfolio-projects">
                 <h2 className="section-title">Featured Projects</h2>
                 <div className="projects-grid">
-                  {projects.map((project, index) => (
+                  {getDisplayItems(projects, showMoreProjects).map((project, index) => (
                     <div key={index} className="project-card">
                       {project.image && (
                         <img src={project.image} alt={project.name} className="project-image" />
@@ -174,6 +246,12 @@ const PreviewModal = ({ formData, onClose }) => {
                     </div>
                   ))}
                 </div>
+                <ViewMoreButton 
+                  items={projects} 
+                  showMore={showMoreProjects} 
+                  setShowMore={setShowMoreProjects}
+                  label="projects"
+                />
               </section>
             )}
 
@@ -182,7 +260,7 @@ const PreviewModal = ({ formData, onClose }) => {
               <section className="portfolio-blogs">
                 <h2 className="section-title">Recent Blogs</h2>
                 <div className="blogs-grid">
-                  {blogs.map((blog, index) => (
+                  {getDisplayItems(blogs, showMoreBlogs).map((blog, index) => (
                     <div key={index} className="blog-card">
                       {blog.image && (
                         <img src={blog.image} alt={blog.title} className="blog-image" />
@@ -195,6 +273,12 @@ const PreviewModal = ({ formData, onClose }) => {
                     </div>
                   ))}
                 </div>
+                <ViewMoreButton 
+                  items={blogs} 
+                  showMore={showMoreBlogs} 
+                  setShowMore={setShowMoreBlogs}
+                  label="blogs"
+                />
               </section>
             )}
 
